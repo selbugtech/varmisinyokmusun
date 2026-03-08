@@ -499,6 +499,27 @@
             { name: "Viper \u00d6zel Teklif", display: "???TL", tier: 'yesil', img: "16.jpg" }
         ];
 
+        // ===== KASA OLASILIKLARI =====
+        // Oyuncu kendi kasasını seçtiğinde içindeki skinin hangi tier'dan olacağını belirler.
+        // Değerlerin toplamı 100 olmalıdır.
+        const tierProbabilities = {
+            'acik-mavi': 10,
+            'mavi':      60,
+            'sari':      25,
+            'kirmizi':    5,
+        };
+
+        function getWeightedRandomTier() {
+            const rand = Math.random() * 100;
+            let cumulative = 0;
+            for (const [tier, prob] of Object.entries(tierProbabilities)) {
+                cumulative += prob;
+                if (rand < cumulative) return tier;
+            }
+            return Object.keys(tierProbabilities)[0];
+        }
+        // =============================
+
         // ===== OYUN DEĞİŞKENLERİ =====
         let cases = [];
         let myCaseIndex = null;
@@ -913,6 +934,21 @@
 
             if (myCaseIndex === null) {
                 myCaseIndex = index;
+
+                // Ağırlıklı olasılıkla player'ın kasasına bir tier ata
+                const targetTier = getWeightedRandomTier();
+                if (cases[index].skin.tier !== targetTier) {
+                    const candidates = cases.filter(
+                        (c, i) => i !== index && !c.opened && c.skin.tier === targetTier
+                    );
+                    if (candidates.length > 0) {
+                        const pick = candidates[Math.floor(Math.random() * candidates.length)];
+                        const temp = cases[index].skin;
+                        cases[index].skin = pick.skin;
+                        pick.skin = temp;
+                    }
+                }
+
                 playSound('select');
                 infoDiv.innerHTML = `<span style="color:#5ddc6a">Kendi kasanı ayırdın!</span> Şimdi masadan ${casesToOpen} kasa aç.`;
                 renderBoard();
