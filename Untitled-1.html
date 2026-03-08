@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viperteam Özel: Var mısın Yok musun?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Rajdhani', 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(rgba(10, 15, 25, 0.88), rgba(10, 15, 25, 0.88)),
+                        url('arkaplan.png');
+            background-color: #0a0f19;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #c7d5e0;
+            text-align: center;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== BAŞLIK ===== */
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: #5ddc6a;
+            margin: 14px 0 10px;
+            font-size: 2.2em;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px rgba(93, 220, 106, 0.5),
+                         0 0 20px rgba(93, 220, 106, 0.3),
+                         0 0 40px rgba(93, 220, 106, 0.1);
+        }
+
+        /* ===== ÜST BİLGİ ALANI ===== */
+        #top-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(42, 71, 94, 0.7), rgba(27, 40, 56, 0.9));
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(93, 220, 106, 0.3);
+            border-bottom: 3px solid #5ddc6a;
+            min-height: 80px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+        }
+        #game-info {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* ===== TUR İLERLEME ===== */
+        #round-progress {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 14px;
+            gap: 6px;
+        }
+        .round-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(143, 152, 160, 0.25);
+            border: 2px solid rgba(143, 152, 160, 0.4);
+            transition: all 0.4s ease;
+        }
+        .round-dot.active {
+            background: #5ddc6a;
+            border-color: #5ddc6a;
+            box-shadow: 0 0 10px rgba(93, 220, 106, 0.6);
+            animation: dotPulse 1.5s ease-in-out infinite;
+        }
+        .round-dot.completed {
+            background: rgba(93, 220, 106, 0.4);
+            border-color: rgba(93, 220, 106, 0.6);
+        }
+        .round-separator {
+            width: 20px;
+            height: 2px;
+            background: rgba(143, 152, 160, 0.2);
+        }
+        @keyframes dotPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(93, 220, 106, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(93, 220, 106, 0.9); }
+        }
+
+        /* ===== ANA LAYOUT ===== */
+        .container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* ===== KASA GRID ===== */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            flex-grow: 1;
+            margin: 0 20px;
+        }
+
+        /* ===== KASA KUTULARI ===== */
+        .case {
+            background: linear-gradient(145deg, #3a531a, #1a2a0a);
+            border: 2px solid rgba(143, 152, 160, 0.5);
+            border-radius: 10px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                        inset 0 -2px 0 rgba(0, 0, 0, 0.3);
+            position: relative;
+            text-align: center;
+            padding: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        /* Üzerinden geçen ışık efekti */
+        .case::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+            transition: left 0.5s;
+            pointer-events: none;
+        }
+        .case:hover::before {
+            left: 100%;
+        }
+        .case:hover {
+            transform: translateY(-6px) scale(1.04);
+            box-shadow: 0 8px 25px rgba(93, 220, 106, 0.3),
+                        0 0 15px rgba(93, 220, 106, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-color: #5ddc6a;
+        }
+
+        /* Seçilen kasa - neon pulse */
+        .case.my-case {
+            border: 3px solid #5ddc6a;
+            background: linear-gradient(145deg, #1a3a2a, #0d1f15);
+            box-shadow: 0 0 20px rgba(93, 220, 106, 0.4),
+                        0 0 40px rgba(93, 220, 106, 0.15),
+                        inset 0 0 15px rgba(93, 220, 106, 0.1);
+            animation: myCasePulse 2s ease-in-out infinite;
+        }
+        .case.my-case::after {
+            content: '\senin kasan';
+            position: absolute;
+            top: 4px;
+            right: 7px;
+            font-size: 0.45em;
+            color: #5ddc6a;
+            text-shadow: 0 0 8px rgba(93, 220, 106, 0.8);
+        }
+        @keyframes myCasePulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(93, 220, 106, 0.4), 0 0 40px rgba(93, 220, 106, 0.15); }
+            50% { box-shadow: 0 0 30px rgba(93, 220, 106, 0.6), 0 0 60px rgba(93, 220, 106, 0.3); }
+        }
+
+        /* Açılan kasa */
+        .case.opened {
+            cursor: default;
+            transform: none;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            padding-top: 0;
+            opacity: 0.92;
+        }
+        .case.opened:hover {
+            transform: none;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+            border-color: inherit;
+        }
+        .case.opened::before { display: none; }
+
+        /* Açılan kasalar - tier glow */
+        .case.opened.tier-kirmizi { box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 12px rgba(235, 75, 75, 0.25); }
+        .case.opened.tier-yesil { box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 18px rgba(0, 255, 0, 0.35); }
+        .case.opened.tier-sari { box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 8px rgba(255, 215, 0, 0.15); }
+
+        .case img { max-height: 60px; max-width: 90%; margin-bottom: 5px; object-fit: contain; }
+
+        /* Kasa açılış animasyonu */
+        .case.opening {
+            animation: caseOpen 0.6s ease-out;
+            pointer-events: none;
+        }
+        @keyframes caseOpen {
+            0% { transform: scale(1) rotateY(0deg); }
+            30% { transform: scale(1.15) rotateY(90deg); filter: brightness(2); }
+            60% { transform: scale(1.1) rotateY(180deg); }
+            100% { transform: scale(1) rotateY(360deg); filter: brightness(1); }
+        }
+
+        /* ===== TIER RENKLERİ ===== */
+        .tier-acik-mavi { border-color: #87cefa; background: linear-gradient(to bottom, #111, #1a2b38); color: #87cefa; }
+        .tier-mavi { border-color: #4169e1; background: linear-gradient(to bottom, #111, #121f45); color: #4169e1; }
+        .tier-sari { border-color: #ffd700; background: linear-gradient(to bottom, #111, #403600); color: #ffd700; }
+        .tier-beyaz { border-color: #bababa; background: linear-gradient(to bottom, #111, #4a1919); color: #bababa; }
+        .tier-kirmizi { border-color: #eb4b4b; background: linear-gradient(to bottom, #111, #5c0000); color: #eb4b4b; }
+        .tier-yesil { border-color: #00ff00; background: linear-gradient(to bottom, #111, #003300); color: #00ff00; text-shadow: 0 0 10px rgba(0,255,0,0.8); }
+
+        .opened-name { font-size: 0.45em; margin-bottom: 2px; line-height: 1.2; font-weight: 600; }
+        .opened-val { font-size: 0.6em; font-weight: bold; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+        /* ===== FİYAT PANELLERİ ===== */
+        .prices {
+            width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .price-box {
+            background: linear-gradient(135deg, rgba(23, 26, 33, 0.9), rgba(10, 12, 18, 0.95));
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(51, 51, 51, 0.6);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85em;
+            transition: all 0.4s ease;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .price-box img { max-height: 25px; margin-right: 10px; }
+
+        /* Fiyat listesi renkleri */
+        .val-acik-mavi { color: #87cefa; border-left: 5px solid #87cefa; }
+        .val-mavi { color: #4169e1; border-left: 5px solid #4169e1; }
+        .val-sari { color: #ffd700; border-left: 5px solid #ffd700; }
+        .val-beyaz { color: #bababa; border-left: 5px solid #bababa; }
+        .val-kirmizi { color: #eb4b4b; border-left: 5px solid #eb4b4b; }
+        .val-yesil { color: #00ff00; border-left: 5px solid #00ff00; text-shadow: 0 0 5px rgba(0,255,0,0.5); }
+
+        /* Aktif yüksek değer glow */
+        .price-box.val-kirmizi:not(.eliminated) {
+            animation: priceGlowRed 3s ease-in-out infinite;
+        }
+        .price-box.val-yesil:not(.eliminated) {
+            animation: priceGlowGreen 2s ease-in-out infinite;
+        }
+        @keyframes priceGlowRed {
+            0%, 100% { box-shadow: 0 0 5px rgba(235, 75, 75, 0.08); }
+            50% { box-shadow: 0 0 12px rgba(235, 75, 75, 0.22); }
+        }
+        @keyframes priceGlowGreen {
+            0%, 100% { box-shadow: 0 0 8px rgba(0, 255, 0, 0.1); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); }
+        }
+
+        /* Elenen item */
+        .price-box.eliminated {
+            text-decoration: line-through;
+            opacity: 0.2;
+            background: rgba(0, 0, 0, 0.8);
+            border-color: rgba(17, 17, 17, 0.5);
+            transform: scaleY(0.85);
+            filter: grayscale(1);
+            animation: none;
+        }
+        /* Yeni elenen item animasyonu */
+        .price-box.just-eliminated {
+            animation: strikeOut 0.6s ease forwards;
+        }
+        @keyframes strikeOut {
+            0% { opacity: 1; transform: scaleY(1); background-color: rgba(235, 75, 75, 0.3); }
+            50% { opacity: 0.5; transform: scaleY(0.9); }
+            100% { opacity: 0.2; transform: scaleY(0.85); filter: grayscale(1); }
+        }
+
+        /* ===== MODAL ===== */
+        #modal {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 100;
+            pointer-events: none;
+        }
+        #modal.show {
+            animation: modalFadeIn 0.4s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-content {
+            background: linear-gradient(145deg, rgba(15, 22, 35, 0.97), rgba(10, 14, 25, 0.98));
+            padding: 25px 40px;
+            border-radius: 16px 16px 0 0;
+            border: 2px solid #5ddc6a;
+            border-bottom: none;
+            text-align: center;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 -4px 40px rgba(93, 220, 106, 0.3),
+                        0 -2px 80px rgba(0, 0, 0, 0.5),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: modalSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: all;
+        }
+        /* Oyun sonu modalı - tam ekran ortada */
+        #modal.fullscreen {
+            top: 0; bottom: 0; height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            pointer-events: all;
+        }
+        #modal.fullscreen .modal-content {
+            border-radius: 16px;
+            border-bottom: 2px solid #5ddc6a;
+            width: auto;
+            max-width: 600px;
+            padding: 40px;
+            animation: modalContentIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes modalSlideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes modalContentIn {
+            from { transform: scale(0.8) translateY(30px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .modal-content h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            margin-top: 0;
+            font-size: 2.2em;
+            letter-spacing: 2px;
+        }
+        .offer-amount {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5em;
+            color: #a4d007;
+            margin: 20px 0;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(164,208,7,0.5);
+        }
+        .modal-content img {
+            max-height: 180px;
+            margin-top: 20px;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+        }
+
+        /* ===== BUTONLAR ===== */
+        button {
+            font-family: 'Orbitron', sans-serif;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            margin: 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        button:hover {
+            transform: scale(1.08);
+        }
+        button:active {
+            transform: scale(0.96);
+        }
+        .btn-deal {
+            background: linear-gradient(135deg, #a4d007, #8ab806);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(164, 208, 7, 0.3);
+        }
+        .btn-deal:hover {
+            box-shadow: 0 4px 25px rgba(164, 208, 7, 0.5);
+        }
+        .btn-nodeal {
+            background: linear-gradient(135deg, #d9534f, #c0392b);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(217, 83, 79, 0.3);
+        }
+        .btn-nodeal:hover {
+            box-shadow: 0 4px 25px rgba(217, 83, 79, 0.5);
+        }
+
+        /* ===== SES BUTONU ===== */
+        #sound-toggle {
+            position: fixed;
+            top: 12px;
+            right: 15px;
+            padding: 8px 14px;
+            font-size: 0.75em;
+            background: rgba(42, 71, 94, 0.85);
+            color: #c7d5e0;
+            border: 1px solid rgba(93, 220, 106, 0.4);
+            border-radius: 6px;
+            z-index: 200;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            letter-spacing: 0;
+            text-transform: none;
+        }
+        #sound-toggle:hover {
+            border-color: #5ddc6a;
+            box-shadow: 0 0 10px rgba(93, 220, 106, 0.2);
+        }
+
+        /* ===== EKRAN SARSINTISI ===== */
+        @keyframes screenShake {
+            0%, 100% { transform: translateX(0); }
+            10% { transform: translateX(-5px) translateY(2px); }
+            20% { transform: translateX(5px) translateY(-2px); }
+            30% { transform: translateX(-4px) translateY(1px); }
+            40% { transform: translateX(4px) translateY(-1px); }
+            50% { transform: translateX(-2px); }
+            60% { transform: translateX(2px); }
+        }
+    </style>
+</head>
+<body>
+
+
+    <button id="sound-toggle" onclick="toggleSound()">SES: AÇIK</button>
+
+    <h1>VIPERTEAM Kutu Açılımı</h1>
+
+    <div id="top-area">
+        <div id="game-info">Kendi kasanı seçerek başla!</div>
+    </div>
+
+    <div id="round-progress"></div>
+
+    <div class="container">
+        <div class="prices" id="left-prices"></div>
+        <div class="board" id="board"></div>
+        <div class="prices" id="right-prices"></div>
+    </div>
+
+    <div id="modal">
+        <div class="modal-content" id="modal-content"></div>
+    </div>
+
+    <script>
+        // ===== VERİ =====
+        const skinData = [
+            { name: "ㅤㅤㅤ   🔄Tekrar Oyna🔄",               display: "", tier: 'beyaz', img: "0.jpg" },
+            { name: "PP-Bizon | Wood Block Camo",              display: "1TL", tier: 'acik-mavi', img: "1.png" },
+            { name: "P250 | Facility Draft",            display: "2TL", tier: 'acik-mavi', img: "2.png" },
+            { name: "P90 | Freight",          display: "5TL", tier: 'acik-mavi', img: "5.png" },
+            { name: "P2000 | Red Wing",         display: "10TL", tier: 'mavi', img: "10.png" },
+            { name: "SSG 08 | Abyss",           display: "15TL", tier: 'mavi', img: "15.png" },
+            { name: "MP9 | Cobalt Paisley",            display: "25TL", tier: 'mavi', img: "25.png" },
+            { name: "MAC-10 | Cat Fight",                display: "50TL", tier: 'mavi', img: "50.png" },
+            { name: "Dual Berettas | Flora Carnivora",        display: "75TL", tier: 'mavi', img: "75.png" },
+            { name: "M4A1-S | Solitude",          display: "100TL", tier: 'sari', img: "100.png" },
+            { name: "Galil AR | Stone Cold",       display: "200TL", tier: 'sari', img: "200.png" },
+            { name: "Glock-18 | Shinobu",           display: "300TL", tier: 'sari', img: "300.png" },
+            { name: "MP7 | Abyssal Apparition",               display: "400TL", tier: 'sari', img: "400.png" },
+            { name: "FAMAS | Rapid Eye Movement",             display: "500TL", tier: 'sari', img: "500.png" },
+            { name: "USP-S | Jawbreaker",           display: "600TL", tier: 'sari', img: "600.png" },
+            { name: "M4A1-S | Black Lotus",           display: "700TL", tier: 'sari', img: "700.png" },
+            { name: "M4A4 | Desolate Space",           display: "800TL", tier: 'sari', img: "800.png" },
+            { name: "Desert Eagle | Crimson Web",           display: "900TL", tier: 'sari', img: "900.png" },
+            { name: "AK-47 | Frontside Misty",             display: "1000TL", tier: 'kirmizi', img: "1000.png" },
+            { name: "AWP | Chromatic Aberration",            display: "1500TL", tier: 'kirmizi', img: "1500.png" },
+            { name: "M4A4 | Temukau",             display: "2000TL", tier: 'kirmizi', img: "2000.png" },
+            { name: "AWP | Hyper Beast",        display: "2500TL", tier: 'kirmizi', img: "2500.png" },
+            { name: "AK-47 | Neon Rider",        display: "3000TL", tier: 'kirmizi', img: "3000.png" },
+            { name: "Rare Special Item",             display: "5000TL", tier: 'kirmizi', img: "5000.png" },
+            { name: "Viper \u00d6zel Teklif", display: "???TL", tier: 'yesil', img: "16.jpg" }
+        ];
+
+        // ===== OYUN DEĞİŞKENLERİ =====
+        let cases = [];
+        let myCaseIndex = null;
+        let roundPattern = [5, 4, 4, 4, 3, 3];
+        let currentRound = 0;
+        let casesToOpen = roundPattern[0];
+        let isOfferTime = false;
+        let gameOver = false;
+        let previouslyEliminated = new Set();
+        let isAnimating = false;
+        const infoDiv = document.getElementById('game-info');
+
+        // ===== SES SİSTEMİ (Web Audio API) =====
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function getAudioCtx() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+            return audioCtx;
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-toggle').textContent = soundEnabled ? 'SES: AÇIK' : 'SES: KAPALI';
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioCtx();
+                const now = ctx.currentTime;
+
+                switch(type) {
+
+                    // ============================================================
+                    // 'select' - KASA SEÇİM SESİ (oyuncu kendi kasasını seçtiğinde)
+                    // Kısa tiz bip sesi. 800Hz'den 1200Hz'e yükseliyor.
+                    // DEĞİŞTİRMEK İÇİN:
+                    //   - frequency: Başlangıç tonu (800) ve bitiş tonu (1200). Artır = daha tiz
+                    //   - gain: Ses yüksekliği (0.15). Max 1.0
+                    //   - stop süre: Sesin uzunluğu (0.3 saniye)
+                    // ============================================================
+                    case 'select': {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.frequency.setValueAtTime(800, now);          // Başlangıç frekansı (Hz)
+                        osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1); // Bitiş frekansı
+                        gain.gain.setValueAtTime(0.15, now);             // Ses yüksekliği (0-1)
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3); // Sönme süresi
+                        osc.start(now);
+                        osc.stop(now + 0.3);                             // Toplam süre (saniye)
+                        break;
+                    }
+
+                    // ============================================================
+                    // 'caseOpen' - KASA AÇILIŞ SESİ (her kasa açıldığında)
+                    // Mekanik klik + yükselen ton. İki parça: gürültü (klik) + osilatör (ton)
+                    // DEĞİŞTİRMEK İÇİN:
+                    //   - noiseGain: Klik sesi yüksekliği (0.25)
+                    //   - frequency: Ton başlangıcı (300) ve bitişi (600)
+                    //   - gain: Ton yüksekliği (0.1)
+                    // ============================================================
+                    case 'caseOpen': {
+                        // Klik sesi (beyaz gürültü)
+                        const noise = ctx.createBufferSource();
+                        const buf = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate);
+                        const data = buf.getChannelData(0);
+                        for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.03));
+                        noise.buffer = buf;
+                        const noiseGain = ctx.createGain();
+                        noiseGain.gain.setValueAtTime(0.25, now);        // Klik yüksekliği (0-1)
+                        noise.connect(noiseGain);
+                        noiseGain.connect(ctx.destination);
+                        noise.start(now);
+
+                        // Yükselen ton
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.frequency.setValueAtTime(300, now);          // Başlangıç tonu
+                        osc.frequency.exponentialRampToValueAtTime(600, now + 0.15); // Bitiş tonu
+                        gain.gain.setValueAtTime(0.1, now);              // Ton yüksekliği
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+                        osc.start(now);
+                        osc.stop(now + 0.2);
+                        break;
+                    }
+
+                    // ============================================================
+                    // 'highValue' - YÜKSEK DEĞER SESİ (kırmızı/yeşil tier açılınca)
+                    // Dramatik yükselen akor. 4 nota ard arda çalıyor.
+                    // DEĞİŞTİRMEK İÇİN:
+                    //   - Notalar: [523.25(Do), 659.25(Mi), 783.99(Sol), 1046.50(Do2)]
+                    //     Daha düşük = daha kalın, daha yüksek = daha ince
+                    //   - osc.type: Dalga tipi ('triangle', 'sine', 'square', 'sawtooth')
+                    //   - 0.08: Notalar arası bekleme (saniye). Artır = daha yavaş
+                    //   - 0.12: Her nota yüksekliği
+                    //   - 0.8: Toplam sönme süresi
+                    // ============================================================
+                    case 'highValue': {
+    const notes = [
+        { freq: 700, time: 0 },
+        { freq: 620, time: 0.22 },
+        { freq: 520, time: 0.45 }
+    ];
+
+    notes.forEach(n => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const start = now + n.time;
+
+        // başlangıç frekansı
+        osc.frequency.setValueAtTime(n.freq, start);
+
+        // hafif aşağı kayma (dramatic effect)
+        osc.frequency.exponentialRampToValueAtTime(n.freq * 0.92, start + 0.35);
+
+        // ses açılıp kapanma
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.22, start + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 1.1);
+
+        osc.start(start);
+        osc.stop(start + 1.2);
+    });
+
+    break;
+}
+
+
+
+                    // ============================================================
+                    // 'lowValue' - DÜŞÜK DEĞER SESİ (açık mavi tier açılınca)
+                    // Alçalan üzgün ton. 400Hz'den 200Hz'e düşüyor.
+                    // DEĞİŞTİRMEK İÇİN:
+                    //   - frequency: Başlangıç (400) ve bitiş (200)
+                    //   - osc.type: 'sine' (yumuşak), 'square' (sert), 'triangle' (orta)
+                    //   - gain: Yükseklik (0.08)
+                    //   - stop süre: Uzunluk (0.4 saniye)
+                    // ============================================================
+                    case 'lowValue': {
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C (mutlu arpej)
+
+    notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "triangle";
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const start = now + i * 0.07;
+
+        osc.frequency.setValueAtTime(freq, start);
+
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.25, start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.45);
+
+        osc.start(start);
+        osc.stop(start + 0.5);
+    });
+
+    break;
+}
+
+                    // ============================================================
+                    // 'phoneRing' - TELEFON ZİLİ (Hamdi bey arıyor)
+                    // 3 kere çalan çift tonlu zil sesi.
+                    // DEĞİŞTİRMEK İÇİN:
+                    //   - ring < 3: Kaç kere çalsın (3)
+                    //   - 0.4: Ziller arası bekleme (saniye)
+                    //   - [440, 480]: Zil frekansları. Değiştir = farklı zil tonu
+                    //   - gain: Zil yüksekliği (0.06)
+                    //   - 0.15: Her bir zilin süresi (saniye)
+                    // ============================================================
+                    case 'phoneRing': {
+                        for (let ring = 0; ring < 3; ring++) {           // Zil tekrar sayısı
+                            const t = now + ring * 0.4;                  // Ziller arası bekleme
+                            [440, 480].forEach(freq => {                 // Zil frekansları
+                                const osc = ctx.createOscillator();
+                                const gain = ctx.createGain();
+                                osc.connect(gain);
+                                gain.connect(ctx.destination);
+                                osc.frequency.setValueAtTime(freq, t);
+                                gain.gain.setValueAtTime(0.06, t);       // Zil yüksekliği
+                                gain.gain.setValueAtTime(0, t + 0.15);   // Zil süresi
+                                osc.start(t);
+                                osc.stop(t + 0.2);
+                            });
+                        }
+                        break;
+                    }
+
+                    // ============================================================
+                    // 'buttonClick' - BUTON TIKLAMA SESİ
+                    // Çok kısa tık sesi.
+                    // DEĞİŞTİRMEK İÇİN:
+                    //   - frequency: Ton (600Hz)
+                    //   - gain: Yükseklik (0.1)
+                    //   - stop: Süre (0.08 saniye - çok kısa)
+                    // ============================================================
+                    case 'buttonClick': {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.frequency.setValueAtTime(600, now);          // Frekans
+                        gain.gain.setValueAtTime(0.1, now);              // Yükseklik
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                        osc.start(now);
+                        osc.stop(now + 0.08);                            // Süre
+                        break;
+                    }
+
+                    // ============================================================
+                    // 'win' - ZAFER FANFARI (oyun bittiğinde)
+                    // 7 notalık melodi. Do-Mi-Sol-Do2-Sol-Do2-Mi2
+                    // DEĞİŞTİRMEK İÇİN:
+                    //   - notes: Nota frekansları dizisi. Ekle/çıkar/değiştir
+                    //   - osc.type: Dalga tipi ('triangle')
+                    //   - 0.12: Notalar arası bekleme (saniye)
+                    //   - 0.15: Her nota yüksekliği
+                    //   - 1.2: Toplam sönme süresi
+                    // ============================================================
+                    case 'win': {
+                        const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50, 1318.51]; // Nota frekansları
+                        notes.forEach((freq, i) => {
+                            const osc = ctx.createOscillator();
+                            const gain = ctx.createGain();
+                            osc.connect(gain);
+                            gain.connect(ctx.destination);
+                            osc.type = 'triangle';                       // Dalga tipi
+                            osc.frequency.setValueAtTime(freq, now + i * 0.12); // Notalar arası süre
+                            gain.gain.setValueAtTime(0, now + i * 0.12);
+                            gain.gain.linearRampToValueAtTime(0.15, now + i * 0.12 + 0.04); // Nota yüksekliği
+                            gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2); // Sönme süresi
+                            osc.start(now + i * 0.12);
+                            osc.stop(now + 1.2);
+                        });
+                        break;
+                    }
+                }
+            } catch(e) { /* ses hatası sessizce geç */ }
+        }
+
+        // ===== EKRAN SARSINTISI =====
+        function screenShake() {
+            document.body.style.animation = 'screenShake 0.4s ease';
+            setTimeout(() => { document.body.style.animation = ''; }, 400);
+        }
+
+        // ===== KONFETİ =====
+        function createConfetti() {
+            const canvas = document.createElement('canvas');
+            canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:150;';
+            document.body.appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#5ddc6a', '#a4d007', '#ffd700', '#eb4b4b', '#4169e1', '#87cefa', '#00ff00'];
+
+            for (let i = 0; i < 120; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: -20 - Math.random() * 200,
+                    w: 6 + Math.random() * 6,
+                    h: 4 + Math.random() * 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: 2 + Math.random() * 4,
+                    rot: Math.random() * 360,
+                    rotSpeed: (Math.random() - 0.5) * 10,
+                    opacity: 1
+                });
+            }
+
+            let frame = 0;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let alive = false;
+                particles.forEach(p => {
+                    if (p.opacity <= 0) return;
+                    alive = true;
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.1;
+                    p.rot += p.rotSpeed;
+                    if (p.y > canvas.height) p.opacity -= 0.02;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+                });
+                frame++;
+                if (alive && frame < 300) requestAnimationFrame(animate);
+                else canvas.remove();
+            }
+            animate();
+        }
+
+        // ===== TUR İLERLEME =====
+        function updateRoundProgress() {
+            const container = document.getElementById('round-progress');
+            container.innerHTML = '';
+            roundPattern.forEach((count, i) => {
+                if (i > 0) {
+                    const sep = document.createElement('div');
+                    sep.className = 'round-separator';
+                    container.appendChild(sep);
+                }
+                const dot = document.createElement('div');
+                dot.className = 'round-dot';
+                dot.title = `Tur ${i + 1}: ${count} kasa`;
+                if (i < currentRound) dot.classList.add('completed');
+                if (i === currentRound && myCaseIndex !== null) dot.classList.add('active');
+                container.appendChild(dot);
+            });
+        }
+
+        // ===== OYUN FONKSİYONLARI =====
+        function initGame() {
+            let shuffledSkins = [...skinData].sort(() => Math.random() - 0.5);
+            cases = shuffledSkins.map((skin, index) => ({ id: index + 1, skin: skin, opened: false }));
+            myCaseIndex = null;
+            currentRound = 0;
+            casesToOpen = roundPattern[0];
+            isOfferTime = false;
+            gameOver = false;
+            isAnimating = false;
+            previouslyEliminated = new Set();
+            infoDiv.innerText = "Sona saklamak istediğin kendi kasanı seç (İlk kasa)";
+            renderPrices();
+            renderBoard();
+            updateRoundProgress();
+        }
+
+        function renderPrices() {
+            const leftDiv = document.getElementById('left-prices');
+            const rightDiv = document.getElementById('right-prices');
+            leftDiv.innerHTML = '';
+            rightDiv.innerHTML = '';
+
+            const currentlyEliminated = new Set();
+            cases.forEach(c => { if (c.opened) currentlyEliminated.add(c.skin.name); });
+
+            skinData.forEach((skin, index) => {
+                const isEliminated = currentlyEliminated.has(skin.name);
+                const isNewlyEliminated = isEliminated && !previouslyEliminated.has(skin.name);
+
+                const div = document.createElement('div');
+                div.className = `price-box val-${skin.tier}`;
+                if (isEliminated) div.classList.add('eliminated');
+                if (isNewlyEliminated) div.classList.add('just-eliminated');
+
+                div.innerHTML = `
+                    <div style="display:flex; align-items:center;">
+                        <img src="${skin.img}" alt="skin">
+                        <span style="font-size:0.85em">${skin.name}</span>
+                    </div>
+                    <span>${skin.display}</span>
+                `;
+
+                if (index < 12) leftDiv.appendChild(div);
+                else rightDiv.appendChild(div);
+            });
+
+            previouslyEliminated = currentlyEliminated;
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+            cases.forEach((c, index) => {
+                const box = document.createElement('div');
+
+                if (c.opened) {
+                    box.className = `case opened tier-${c.skin.tier}`;
+                    box.innerHTML = `
+                        <img src="${c.skin.img}" alt="skin">
+                        <div class="opened-name">${c.skin.name}</div>
+                        <div class="opened-val">${c.skin.display}</div>
+                    `;
+                } else {
+                    box.className = `case ${myCaseIndex === index ? 'my-case' : ''}`;
+                    box.innerText = c.id;
+                }
+
+                box.onclick = () => handleCaseClick(index);
+                board.appendChild(box);
+            });
+        }
+
+        function handleCaseClick(index) {
+            if (gameOver || isOfferTime || isAnimating || cases[index].opened) return;
+
+            if (myCaseIndex === null) {
+                myCaseIndex = index;
+                playSound('select');
+                infoDiv.innerHTML = `<span style="color:#5ddc6a">Kendi kasanı ayırdın!</span> Şimdi masadan ${casesToOpen} kasa aç.`;
+                renderBoard();
+                updateRoundProgress();
+                return;
+            }
+
+            if (index === myCaseIndex) {
+                alert("Bu senin kasan, oyunun en sonunda açılacak!");
+                return;
+            }
+
+            // Animasyonlu açılış
+            isAnimating = true;
+            const caseElements = document.querySelectorAll('.case');
+            const targetEl = caseElements[index];
+
+            targetEl.classList.add('opening');
+            playSound('caseOpen');
+
+            setTimeout(() => {
+                cases[index].opened = true;
+                casesToOpen--;
+
+                const openedSkin = cases[index].skin;
+
+                // Tier'a göre ses ve efekt
+                if (openedSkin.tier === 'kirmizi' || openedSkin.tier === 'yesil') {
+                    playSound('highValue');
+                    screenShake();
+                } else if (openedSkin.tier === 'acik-mavi') {
+                    playSound('lowValue');
+                }
+
+                renderBoard();
+                renderPrices();
+                updateRoundProgress();
+
+                infoDiv.innerHTML = `GİDEN: <strong class="val-${openedSkin.tier}">${openedSkin.name}</strong> (${openedSkin.display})<br>Kalan açılacak kasa: ${casesToOpen}`;
+
+                isAnimating = false;
+
+                if (casesToOpen === 0) {
+                    isOfferTime = true;
+                    setTimeout(showOffer, 1500);
+                }
+            }, 600);
+        }
+
+        function showOffer() {
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modal-content');
+
+            playSound('phoneRing');
+
+            // Teklif modalı: alt bar olarak (arkası görünsün)
+            modal.classList.remove('fullscreen');
+
+            content.innerHTML = `
+                <h2 style="margin-bottom:10px; font-size:1.8em;">Hamdi bey arıyor...</h2>
+                <div class="offer-amount" style="font-size: 2.2em; margin:10px 0;">Teklif Bekleniyor...</div>
+                <p style="font-size:1em; color: #8f98a0; margin:5px 0;">(Teklifi sunucu söyleyecek)</p>
+                <div>
+                    <button class="btn-deal" onclick="playSound('buttonClick'); acceptOffer()">VAR MISIN?</button>
+                    <button class="btn-nodeal" onclick="playSound('buttonClick'); declineOffer()">YOK MUSUN?</button>
+                </div>
+            `;
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+        }
+
+        function acceptOffer() {
+            endGame('ANLAŞMA SAĞLANDI!', 'Sunucunun teklifini kabul ettin!', true);
+        }
+
+        function declineOffer() {
+            isOfferTime = false;
+            const modal = document.getElementById('modal');
+            modal.classList.remove('show', 'fullscreen');
+            modal.style.display = 'none';
+            currentRound++;
+
+            if (currentRound < roundPattern.length) {
+                casesToOpen = roundPattern[currentRound];
+                infoDiv.innerText = `Teklif reddedildi! Bu turda ${casesToOpen} kasa daha aç.`;
+                updateRoundProgress();
+            } else {
+                endGame('OYUN BİTTİ!', 'Tüm teklifleri reddettin ve kendi kasanı açtın.', false);
+            }
+        }
+
+        function endGame(title, message, dealAccepted) {
+            gameOver = true;
+            const mySkin = cases[myCaseIndex].skin;
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modal-content');
+
+            // Oyun sonu: tam ekran ortada göster
+            modal.classList.add('fullscreen');
+
+            createConfetti();
+            playSound('win');
+
+            let finalHtml = `<h2>${title}</h2><div class="offer-amount" style="font-size:2em; margin-bottom:10px;">${message}</div>`;
+
+            if (dealAccepted) {
+                finalHtml += `<p style="font-size:1.2em; color:#8f98a0">Eğer anlaşıp çıkmasaydın, kendi kasandan bu çıkacaktı:</p>`;
+            } else {
+                finalHtml += `<p style="font-size:1.2em; color:#8f98a0">İşte baştan beri sakladığın kutudan çıkan o eşya:</p>`;
+            }
+
+            finalHtml += `
+                <div style="background:#111; padding:20px; border-radius:12px; border:3px solid; margin: 20px auto; max-width: 350px;" class="tier-${mySkin.tier}">
+                    <h3 style="margin:0; font-size:1.5em; font-family:'Orbitron',sans-serif;">${mySkin.name}</h3>
+                    <img src="${mySkin.img}" style="width:100%; object-fit:contain; margin: 15px 0;">
+                    <p style="font-size:1.8em; margin:0; color:#fff; font-family:'Orbitron',sans-serif;">${mySkin.display}</p>
+                </div>
+                <button class="btn-deal" onclick="playSound('buttonClick'); location.reload()">Tekrar Oyna</button>
+            `;
+
+            content.innerHTML = finalHtml;
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+        }
+
+        // ===== BAŞLAT =====
+        initGame();
+    </script>
+</body>
+</html>
