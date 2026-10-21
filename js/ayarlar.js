@@ -20,16 +20,15 @@ const AYARLAR = {
     //  Toplamı 100 olsun (olmazsa oranlar birbirine göre hesaplanır).
     //  Aynı renkteki ödüller kendi aralarında eşit şanslıdır.
     //
-    //  Şu anki ayar: Tekrar Oyna %16, diğer 24 ödülün her biri %3.5
-    //  (renk oranı = o renkteki ödül sayısı x 3.5)
+    //  Şu anki ayar: her zaman sarı (100TL - 900TL arası 9 ödülden biri)
     // -----------------------------------------------------------------
     oranlar: {
-        "beyaz":     16,     // Tekrar Oyna (1 ödül)
-        "acik-mavi": 10.5,   // 1TL - 5TL (3 ödül)
-        "mavi":      17.5,   // 10TL - 75TL (5 ödül)
-        "sari":      31.5,   // 100TL - 900TL (9 ödül)
-        "kirmizi":   21,     // 1000TL - 5000TL (6 ödül)
-        "yesil":     3.5,    // Viper Özel Teklif (1 ödül)
+        "beyaz":       0,   // Tekrar Oyna (1 ödül)
+        "acik-mavi":   0,   // 1TL - 5TL (3 ödül)
+        "mavi":        0,   // 10TL - 75TL (5 ödül)
+        "sari":      100,   // 100TL - 900TL (9 ödül)
+        "kirmizi":     0,   // 1000TL - 5000TL (6 ödül)
+        "yesil":       0,   // Viper Özel Teklif (1 ödül)
     },
 
     // Genel ses seviyesi. 1 = eski siteyle aynı, 1.5 = daha yüksek, 0.5 = daha kısık
