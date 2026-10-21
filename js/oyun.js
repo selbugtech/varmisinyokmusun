@@ -61,16 +61,14 @@
     function hedefRenk() {
         const n = oynananOyun();
         oynananOyunYaz(n + 1);
+        siraIsaretiCiz();
         const sira = A.ilkOyunlar || [];
         return n < sira.length ? sira[n] : agirlikliRenk();
     }
 
-    function bildirim(metin) {
-        const el = $("#bildirim");
-        el.textContent = metin;
-        el.classList.remove("goster");
-        void el.offsetWidth;
-        el.classList.add("goster");
+    // Sıra baştayken (sonraki oyun ilkOyunlar'dan gelecekken) ses tuşu farklı renkte görünür
+    function siraIsaretiCiz() {
+        $("#ses").classList.toggle("sira-basta", oynananOyun() < (A.ilkOyunlar || []).length);
     }
 
     function mesaj(html, sars = false) {
@@ -353,7 +351,7 @@
         if (t === "y") return yokum();
         if (t === "r" && durum === "bitti" && !kilit) { Ses.cal("tik"); return baslat(); }
         if (t === "m") return sesDugmesi();
-        if (t === "p") { oynananOyunYaz(0); return bildirim("Resetlendi"); }
+        if (t === "p") { oynananOyunYaz(0); return siraIsaretiCiz(); }
     });
 
     // ----- Butonlar -----
@@ -375,5 +373,6 @@
 
     $("#baslik-ana").textContent = A.baslik;
     $("#baslik-alt").textContent = A.altBaslik;
+    siraIsaretiCiz();
     baslat();
 })();
