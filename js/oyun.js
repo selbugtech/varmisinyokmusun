@@ -66,9 +66,9 @@
         return n < sira.length ? sira[n] : agirlikliRenk();
     }
 
-    // Sıra baştayken (sonraki oyun ilkOyunlar'dan gelecekken) ses tuşu farklı renkte görünür
+    // Sıra baştayken (sonraki oyun ilkOyunlar'dan gelecekken) mesaj şeridinin solu sarı görünür
     function siraIsaretiCiz() {
-        $("#ses").classList.toggle("sira-basta", oynananOyun() < (A.ilkOyunlar || []).length);
+        sahneEl.classList.toggle("sira-basta", oynananOyun() < (A.ilkOyunlar || []).length);
     }
 
     function mesaj(html, sars = false) {

@@ -63,6 +63,16 @@
     background: var(--serit);
 }
 .mesaj-kutu { padding-top: 10px; }
+/* Mesaj şeridi soldan başlar; en soldaki siyah parça 0-9.3px arasıdır.
+   Sıra baştayken (P ile sıfırlandıktan sonra) bu parça sarı olur. */
+.mesaj-kutu::before {
+    background: repeating-linear-gradient(135deg, #15160f 0 9.3px, #d9a514 9.3px 23.3px, #15160f 23.3px 28px);
+}
+.sira-basta .mesaj-kutu::before {
+    background:
+        linear-gradient(135deg, #d9a514 9.3px, transparent 9.3px),
+        repeating-linear-gradient(135deg, #15160f 0 9.3px, #d9a514 9.3px 23.3px, #15160f 23.3px 28px);
+}
 #mesaj { font-weight: 700; font-size: 32px; text-transform: uppercase; letter-spacing: 1px; }
 #mesaj small { text-transform: none; font-weight: 600; }
 .kucuk-baslik { font-weight: 700; color: var(--vurgu); }
