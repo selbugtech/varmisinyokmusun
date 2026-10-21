@@ -24,3 +24,4 @@ OBS'te **Tarayıcı Kaynağı** ekle, adres `http://localhost:8080`, boyut 1920x
 | `V` / `Y` | Teklif: Var / Yok |
 | `R` | Oyun bitince tekrar oyna |
 | `M` | Sesi aç/kapat |
+| `P` | İlk oyun sırasını sıfırla (sonraki oyun yine baştan başlar) |

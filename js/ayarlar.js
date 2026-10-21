@@ -31,6 +31,12 @@ const AYARLAR = {
         "yesil":       0,   // Viper Özel Teklif (1 ödül)
     },
 
+    // İlk oyunlarda oyuncunun kasasından sırayla çıkacak renkler.
+    // Bu liste bitince yukarıdaki oranlar geçerli olur.
+    // Sayaç sayfa yenilense de unutulmaz, P tuşu sayacı sıfırlar.
+    // Örnek: ["beyaz"] → ilk oyunda Tekrar Oyna, sonrakiler oranlara göre
+    ilkOyunlar: ["beyaz"],
+
     // Genel ses seviyesi. 1 = eski siteyle aynı, 1.5 = daha yüksek, 0.5 = daha kısık
     sesSeviyesi: 1,
 

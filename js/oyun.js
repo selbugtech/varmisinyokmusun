@@ -50,6 +50,29 @@
         return secenekler[secenekler.length - 1][0];
     }
 
+    // Kaç oyun oynandığı (ilkOyunlar sırası için). Sayfa yenilense de saklanır.
+    function oynananOyun() {
+        try { return parseInt(localStorage.getItem("oynananOyun"), 10) || 0; } catch (e) { return 0; }
+    }
+    function oynananOyunYaz(n) {
+        try { localStorage.setItem("oynananOyun", n); } catch (e) {}
+    }
+
+    function hedefRenk() {
+        const n = oynananOyun();
+        oynananOyunYaz(n + 1);
+        const sira = A.ilkOyunlar || [];
+        return n < sira.length ? sira[n] : agirlikliRenk();
+    }
+
+    function bildirim(metin) {
+        const el = $("#bildirim");
+        el.textContent = metin;
+        el.classList.remove("goster");
+        void el.offsetWidth;
+        el.classList.add("goster");
+    }
+
     function mesaj(html, sars = false) {
         mesajEl.innerHTML = html;
         mesajEl.classList.remove("yeni", "uyari");
@@ -160,8 +183,8 @@
     }
 
     function kendiKasaniSec(i) {
-        // Oyuncunun kasasındaki ödülü ayarlardaki oranlara göre belirle
-        const hedef = agirlikliRenk();
+        // Oyuncunun kasasındaki ödülü önce ilkOyunlar sırasına, sonra oranlara göre belirle
+        const hedef = hedefRenk();
         if (hedef && kasalar[i].odul.renk !== hedef) {
             const adaylar = kasalar.filter((k, j) => j !== i && k.odul.renk === hedef);
             if (adaylar.length) {
@@ -292,6 +315,7 @@
 
     // ----- Klavye kısayolları (yayıncı için) -----
     //  Rakam yaz → o numaralı kasa açılır · V: Var · Y: Yok · R: Tekrar oyna · M: Ses
+    //  P: ilkOyunlar sırasını baştan başlat
     let yazilan = "";
     let yazmaZamani = null;
 
@@ -329,6 +353,7 @@
         if (t === "y") return yokum();
         if (t === "r" && durum === "bitti" && !kilit) { Ses.cal("tik"); return baslat(); }
         if (t === "m") return sesDugmesi();
+        if (t === "p") { oynananOyunYaz(0); return bildirim("Resetlendi"); }
     });
 
     // ----- Butonlar -----

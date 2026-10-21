@@ -348,6 +348,27 @@ button { font: inherit; color: inherit; }
 }
 .yazilan.goster { opacity: 1; transform: translateX(-50%); }
 
+.bildirim {
+    position: absolute;
+    left: 24px;
+    bottom: 10px;
+    padding: 8px 16px;
+    font-size: 18px;
+    font-weight: 700;
+    background: var(--vurgu);
+    color: var(--vurgu-metin);
+    border-radius: var(--radius);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 60;
+}
+.bildirim.goster { animation: bildirim 2.2s ease forwards; }
+@keyframes bildirim {
+    0% { opacity: 0; transform: translateY(10px); }
+    12%, 80% { opacity: 1; transform: none; }
+    100% { opacity: 0; }
+}
+
 .ses {
     position: absolute;
     right: 14px;
