@@ -66,7 +66,7 @@
         return n < sira.length ? sira[n] : agirlikliRenk();
     }
 
-    // Sıra baştayken (sonraki oyun ilkOyunlar'dan gelecekken) mesaj şeridinin solu sarı görünür
+    // Sıra baştayken (sonraki oyun ilkOyunlar'dan gelecekken) 6 ile 7 arasındaki üst grid çizgisi gizlenir
     function siraIsaretiCiz() {
         sahneEl.classList.toggle("sira-basta", oynananOyun() < (A.ilkOyunlar || []).length);
     }
