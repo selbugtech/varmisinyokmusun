@@ -1,0 +1,159 @@
+/* TEMA · TAKTİK
+   Askeri operasyon havası: haki yeşil, şablon (stencil) yazılar, cephane sandığı kasalar, sarı-siyah uyarı şeritleri. */
+@import url("https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Saira+Condensed:wght@500;600;700&display=swap");
+
+:root {
+    --fon: #12140e;
+    --metin: #e4e2d4;
+    --metin-soluk: #8f927c;
+    --vurgu: #d9a514;
+    --vurgu-metin: #1a1400;
+    --tehlike: #b8322a;
+    --panel-bg: rgba(30, 34, 24, 0.92);
+    --panel-kenar: #3d4330;
+    --radius: 3px;
+    --font-baslik: "Black Ops One", sans-serif;
+    --font-metin: "Saira Condensed", sans-serif;
+    --font-sayi: "Black Ops One", sans-serif;
+    --r-beyaz: #b0c3d9;
+    --r-acik-mavi: #5e98d9;
+    --r-mavi: #4b69ff;
+    --r-sari: #e4ae39;
+    --r-kirmizi: #eb4b4b;
+    --r-yesil: #7fd34e;
+    --konfeti: #d9a514, #6b7a3a, #b8322a, #e4e2d4, #3d4330;
+    --serit: repeating-linear-gradient(-45deg, #d9a514 0 14px, #15160f 14px 28px);
+}
+
+.sahne-fon {
+    background:
+        radial-gradient(ellipse 40% 30% at 15% 25%, rgba(80, 92, 50, 0.35), transparent 70%),
+        radial-gradient(ellipse 35% 40% at 85% 70%, rgba(70, 60, 35, 0.35), transparent 70%),
+        radial-gradient(ellipse 30% 25% at 60% 15%, rgba(50, 60, 35, 0.4), transparent 70%),
+        linear-gradient(rgba(14, 16, 10, 0.9), rgba(14, 16, 10, 0.95)),
+        url("../img/arkaplan.jpg") center / cover;
+}
+.sahne-fon::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(rgba(217, 165, 20, 0.05) 1px, transparent 1px) 0 0 / 80px 80px,
+        linear-gradient(90deg, rgba(217, 165, 20, 0.05) 1px, transparent 1px) 0 0 / 80px 80px;
+}
+
+.baslik, .mesaj-kutu, .turlar-kutu, .benim-kutu {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-kenar);
+    position: relative;
+}
+.baslik { padding: 0 22px; }
+.logo { display: block; width: 84px; height: 84px; filter: sepia(0.5) saturate(0.8); border: 2px solid var(--panel-kenar); }
+.baslik-ana { font-size: 50px; color: var(--metin); letter-spacing: 2px; }
+.baslik-alt { font-weight: 700; font-size: 22px; text-transform: uppercase; letter-spacing: 3px; color: var(--vurgu); }
+
+/* Uyarı şeridi */
+.mesaj-kutu::before, .teklif-ic::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 10px;
+    background: var(--serit);
+}
+.mesaj-kutu { padding-top: 10px; }
+#mesaj { font-weight: 700; font-size: 32px; text-transform: uppercase; letter-spacing: 1px; }
+#mesaj small { text-transform: none; font-weight: 600; }
+.kucuk-baslik { font-weight: 700; color: var(--vurgu); }
+.tur { border-radius: 0; font-size: 15px; }
+.benim-kutu.dolu { border-color: var(--vurgu); }
+#benim-kasa { color: var(--vurgu); font-size: 54px; }
+
+/* Ödül listesi: künye plakası gibi */
+.liste { gap: 5px; }
+.odul {
+    background: linear-gradient(90deg, #262a1d, #1d2016);
+    border: 1px solid var(--panel-kenar);
+    border-left: 6px solid var(--r);
+}
+.odul-ad { font-weight: 600; font-size: 19px; color: #cfcdb9; }
+.odul-deger { font-family: var(--font-baslik); font-size: 22px; }
+.odul.elendi::after { height: 3px; background: var(--tehlike); }
+
+/* Cephane sandığı kasalar */
+.masa { gap: 14px; }
+.kasa-on {
+    border-radius: 3px;
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0 10px, transparent 10px calc(100% - 10px), rgba(0, 0, 0, 0.35) calc(100% - 10px)),
+        linear-gradient(transparent 0 18%, rgba(0, 0, 0, 0.3) 18% 21%, transparent 21% 79%, rgba(0, 0, 0, 0.3) 79% 82%, transparent 82%),
+        linear-gradient(160deg, #5f6b38, #48522a 50%, #353d1e);
+    border: 2px solid #252a15;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 6px 14px rgba(0, 0, 0, 0.6);
+}
+/* Mandallar */
+.kasa-on::before, .kasa-on::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 8px;
+    height: 26px;
+    margin-top: -13px;
+    background: linear-gradient(#a8a58c, #6b6955);
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.kasa-on::before { left: 1px; }
+.kasa-on::after { right: 1px; }
+.kasa-no {
+    font-size: 66px;
+    color: rgba(235, 230, 205, 0.88);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+.kasa:not(.acik):hover .kasa-on { filter: brightness(1.18); }
+.kasa.benim .kasa-on {
+    background:
+        var(--serit) top / 100% 12px no-repeat,
+        var(--serit) bottom / 100% 12px no-repeat,
+        linear-gradient(160deg, #5f6b38, #48522a 50%, #353d1e);
+    border-color: var(--vurgu);
+    box-shadow: 0 0 0 2px var(--vurgu), 0 0 28px rgba(217, 165, 20, 0.4);
+}
+.kasa.benim .kasa-etiket { color: var(--vurgu); font-size: 15px; }
+
+.kasa-arka {
+    border-radius: 3px;
+    background: radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--r) 30%, transparent), transparent 70%), #1d2016;
+    border: 2px solid #252a15;
+    border-bottom: 6px solid var(--r);
+}
+.kasa-ad { font-weight: 600; font-size: 14px; color: #cfcdb9; }
+.kasa-deger { font-family: var(--font-baslik); font-size: 24px; }
+
+.teklif { background: rgba(10, 11, 7, 0.72); }
+.teklif-ic {
+    position: relative;
+    background: #1f2318;
+    border: 2px solid var(--panel-kenar);
+    padding-top: 60px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+}
+.telefon { border-radius: 4px; background: var(--vurgu); }
+.teklif-tur { color: var(--vurgu); font-weight: 700; }
+.teklif-baslik { font-size: 64px; text-transform: uppercase; }
+.teklif-alt { font-weight: 600; }
+.btn { font-size: 32px; border-radius: 3px; letter-spacing: 2px; }
+.btn-var { background: linear-gradient(#e8b928, #b8890c); box-shadow: 0 5px 0 #6e5207; }
+.btn-yok { background: linear-gradient(#cf4036, #93231c); box-shadow: 0 5px 0 #5a1511; }
+
+.sonuc { background: rgba(10, 11, 7, 0.9); }
+.sonuc-baslik { font-size: 96px; color: var(--vurgu); text-shadow: 0 4px 0 #000; }
+.sonuc-alt { font-weight: 600; }
+.sonuc-kart {
+    border: 2px solid var(--panel-kenar);
+    border-bottom: 8px solid var(--r);
+    border-radius: 3px;
+    background: radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--r) 35%, transparent), transparent 70%), #1f2318;
+}
+.sonuc-no { color: var(--vurgu); }
